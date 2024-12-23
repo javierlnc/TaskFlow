@@ -12,6 +12,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +36,7 @@ public class UserEntity implements UserDetails, Principal {
     private String email;
     private String password;
 
+    @OneToMany(mappedBy = "user")
     private List<TaskEntity> tasks;
     private boolean enabled;
     private boolean accountLocked;

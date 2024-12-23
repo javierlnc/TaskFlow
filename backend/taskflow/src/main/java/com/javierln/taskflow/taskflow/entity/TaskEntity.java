@@ -16,6 +16,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +38,9 @@ public class TaskEntity {
     private PriorityEnum priority;
     private StatusEnum status;
     private boolean isCompleted;
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
@@ -45,11 +49,24 @@ public class TaskEntity {
     private LocalDateTime lastModifiedDate;
 
     private static final AtomicInteger counter = new AtomicInteger(1);
+    private static final int MAX_COUNTER = 99999;
 
     public void generateId() {
+
         String date = new SimpleDateFormat("YYMMdd").format(new Date());
-        String uniquePart = String.format("%04d", counter.getAndIncrement());
+        String uniquePart = String.format("%05d", getNextCounterValue());
         this.id = date + uniquePart;
+    }
+
+    private int getNextCounterValue() {
+        int nextValue = counter.getAndIncrement();
+
+        if (nextValue > MAX_COUNTER) {
+            counter.set(1);
+            nextValue = counter.get();
+        }
+
+        return nextValue;
     }
 
 }
