@@ -49,4 +49,13 @@ TaskFlow leverages the following technologies:
 
 ---
 
-##Setup
+## Setup
+
+### Prerequisites
+
+Before you start, ensure you have the following installed:
+
+- Docker
+- Java 17+
+- Node.js 16+
+- MySQL Server
