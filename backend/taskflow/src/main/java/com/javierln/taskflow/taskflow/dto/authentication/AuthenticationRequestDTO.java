@@ -1,16 +1,16 @@
-package com.javierln.taskflow.taskflow.dto;
+package com.javierln.taskflow.taskflow.dto.authentication;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserRequestDTO {
-    @NotEmpty(message = "El nombre no puede estar vacio")
-    private String name;
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+public class AuthenticationRequestDTO {
     @NotEmpty(message = "El email no puede estar vacio")
     @Email(message = "El email no es valido")
     private String email;
