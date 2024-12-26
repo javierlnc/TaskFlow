@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

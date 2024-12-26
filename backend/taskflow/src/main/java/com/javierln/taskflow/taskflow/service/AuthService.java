@@ -1,8 +1,11 @@
 package com.javierln.taskflow.taskflow.service;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
 
     public void registerUser(UserRequestDTO userDto) throws Exception {
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
@@ -38,12 +42,14 @@ public class AuthService {
     }
 
     public AuthenticationResponseDTO loginUser(AuthenticationRequestDTO userDto) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getEmail());
+        UserEntity user = userRepository.findByEmail(userDto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        UserDetails userDetails = userRepository.findByEmail(userDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        authenticatedUser(userDetails.getUsername(), userDetails.getPassword());
+        authenticatedUser(userDto.getEmail(), userDto.getPassword());
+
         String token = jwtUtil.generateToken(userDetails);
-        return buildResponse(userDetails, token);
+        return buildResponse(user, token);
 
     }
 
@@ -61,7 +67,7 @@ public class AuthService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (Exception e) {
-            throw new RuntimeException("Contraseña incorrectos");
+            throw new BadCredentialsException("Contraseña incorrecta");
         }
     }
 
